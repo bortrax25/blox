@@ -24,6 +24,7 @@ import { downloadBlox, readBlox } from "./blox-file";
 import {
   loadMode,
   saveDocument,
+  saveDocumentBeforeUnload,
   saveMode,
   type Mode,
 } from "./storage";
@@ -86,15 +87,21 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
       timer = undefined;
       void saveDocument(editor.document);
     };
+    const flushBeforeUnload = () => {
+      if (timer === undefined) return;
+      window.clearTimeout(timer);
+      timer = undefined;
+      saveDocumentBeforeUnload(editor.document);
+    };
     const unsubscribe = editor.onChange(() => {
       window.clearTimeout(timer);
       timer = window.setTimeout(flush, AUTOSAVE_DELAY_MS);
     });
-    window.addEventListener("pagehide", flush);
+    window.addEventListener("pagehide", flushBeforeUnload);
     return () => {
       flush();
       unsubscribe();
-      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("pagehide", flushBeforeUnload);
     };
   }, [editor]);
 

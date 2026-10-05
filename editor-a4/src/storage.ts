@@ -61,6 +61,17 @@ export async function saveDocument(blocks: unknown[]): Promise<void> {
   }
 }
 
+// Al cerrar la página no da tiempo a terminar una escritura en IndexedDB:
+// localStorage es síncrono, y loadDocument lo pasa a IndexedDB al volver.
+// Si no cabe (imágenes grandes), se intenta igual con IndexedDB.
+export function saveDocumentBeforeUnload(blocks: unknown[]): void {
+  try {
+    localStorage.setItem(LEGACY_KEY, JSON.stringify(blocks));
+  } catch {
+    void saveDocument(blocks);
+  }
+}
+
 export type Mode = 1 | 2;
 
 const MODE_KEY = "editor-a4:mode";
