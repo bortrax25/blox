@@ -1,9 +1,54 @@
-import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
+import {
+  BlockNoteSchema,
+  combineByGroup,
+  filterSuggestionItems,
+} from "@blocknote/core";
+import * as locales from "@blocknote/core/locales";
 import { BlockNoteView } from "@blocknote/mantine";
-import { useCreateBlockNote } from "@blocknote/react";
+import {
+  getDefaultReactSlashMenuItems,
+  SuggestionMenuController,
+  useCreateBlockNote,
+} from "@blocknote/react";
+import {
+  getMultiColumnSlashMenuItems,
+  locales as multiColumnLocales,
+  multiColumnDropCursor,
+  withMultiColumn,
+} from "@blocknote/xl-multi-column";
+import { useMemo } from "react";
+
+const schema = withMultiColumn(BlockNoteSchema.create());
 
 export default function App() {
-  const editor = useCreateBlockNote();
-  return <BlockNoteView editor={editor} theme="light" />;
+  const editor = useCreateBlockNote({
+    schema,
+    dropCursor: multiColumnDropCursor,
+    dictionary: {
+      ...locales.es,
+      multi_column: multiColumnLocales.es,
+    },
+  });
+
+  const getSlashMenuItems = useMemo(
+    () => async (query: string) =>
+      filterSuggestionItems(
+        combineByGroup(
+          getDefaultReactSlashMenuItems(editor),
+          getMultiColumnSlashMenuItems(editor),
+        ),
+        query,
+      ),
+    [editor],
+  );
+
+  return (
+    <BlockNoteView editor={editor} theme="light" slashMenu={false}>
+      <SuggestionMenuController
+        triggerCharacter="/"
+        getItems={getSlashMenuItems}
+      />
+    </BlockNoteView>
+  );
 }
