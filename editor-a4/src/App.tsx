@@ -44,11 +44,15 @@ export default function App() {
   );
 
   return (
-    <BlockNoteView editor={editor} theme="light" slashMenu={false}>
-      <SuggestionMenuController
-        triggerCharacter="/"
-        getItems={getSlashMenuItems}
-      />
-    </BlockNoteView>
+    <main className="desk">
+      <div className="a4-sheet">
+        <BlockNoteView editor={editor} theme="light" slashMenu={false}>
+          <SuggestionMenuController
+            triggerCharacter="/"
+            getItems={getSlashMenuItems}
+          />
+        </BlockNoteView>
+      </div>
+    </main>
   );
 }

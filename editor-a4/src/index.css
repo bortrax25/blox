@@ -1,6 +1,51 @@
+:root {
+  --sheet-width: 210mm;
+  --sheet-height: 297mm;
+  --sheet-margin: 20mm;
+  --desk-bg: #e8e8e8;
+  --font-doc: "Arial", "Arimo", "Liberation Sans", sans-serif;
+}
+
 html,
 body,
 #root {
   margin: 0;
   min-height: 100%;
+}
+
+body {
+  background: var(--desk-bg);
+}
+
+.desk {
+  padding: 40px 16px;
+}
+
+/* Hoja A4: crece hacia abajo si el contenido supera una página. */
+.a4-sheet {
+  box-sizing: border-box;
+  width: var(--sheet-width);
+  min-height: var(--sheet-height);
+  margin: 0 auto;
+  padding: var(--sheet-margin);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Tipografía del documento y colores del editor. */
+.a4-sheet .bn-container {
+  --bn-font-family: var(--font-doc);
+  --bn-colors-editor-text: #000;
+  --bn-colors-editor-background: #fff;
+  font-family: var(--font-doc);
+}
+
+/* Quitar el padding/borde propio del editor para respetar los márgenes de la hoja. */
+.a4-sheet .bn-editor {
+  padding: 0;
+  border-radius: 0;
+  min-height: calc(var(--sheet-height) - 2 * var(--sheet-margin));
+  font-family: var(--font-doc);
+  font-size: 12pt;
+  color: #000;
 }
