@@ -49,3 +49,92 @@ body {
   font-size: 12pt;
   color: #000;
 }
+
+.pdf-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #222;
+  color: #fff;
+  font: 600 14px/1 var(--font-doc);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pdf-button:hover {
+  background: #000;
+}
+
+.pdf-button:focus-visible {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* ---------- Impresión / PDF ---------- */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+
+  /* Solo la hoja: fuera botón, portales y cualquier otra UI. */
+  body > :not(#root),
+  .pdf-button {
+    display: none !important;
+  }
+
+  .desk {
+    padding: 0;
+  }
+
+  .a4-sheet {
+    width: var(--sheet-width);
+    min-height: 0;
+    margin: 0;
+    box-shadow: none;
+    /* Repite los márgenes de 20 mm en cada página impresa. */
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .a4-sheet .bn-editor {
+    min-height: 0;
+  }
+
+  /* Menús flotantes, asa lateral y barras de herramientas del editor. */
+  .a4-sheet .bn-container > :not(.bn-editor) {
+    display: none !important;
+  }
+
+  /* Placeholders, resaltado de selección y tiradores. */
+  .a4-sheet .bn-block-content::after,
+  .a4-sheet .ProseMirror-selectednode::after,
+  .a4-sheet .ProseMirror-selectednode > *::after,
+  .a4-sheet .bn-block-content.ProseMirror-selectednode > *::after,
+  .a4-sheet .ProseMirror-selectednode > .bn-block-content > *::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .a4-sheet .bn-resize-handle,
+  .a4-sheet .bn-add-file-button,
+  .prosemirror-dropcursor-block,
+  .prosemirror-dropcursor-inline,
+  .prosemirror-dropcursor-vertical {
+    display: none !important;
+  }
+
+  .a4-sheet .bn-block-column {
+    box-shadow: none !important;
+  }
+}

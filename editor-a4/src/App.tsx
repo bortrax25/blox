@@ -54,8 +54,17 @@ export default function App() {
     [editor],
   );
 
+  const exportPdf = () => {
+    // Quita el foco para que no se impriman cursor ni menús flotantes.
+    (document.activeElement as HTMLElement | null)?.blur();
+    window.print();
+  };
+
   return (
     <main className="desk">
+      <button type="button" className="pdf-button" onClick={exportPdf}>
+        PDF
+      </button>
       <div className="a4-sheet">
         <BlockNoteView editor={editor} theme="light" slashMenu={false}>
           <SuggestionMenuController
