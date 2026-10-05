@@ -21,6 +21,7 @@ import {
 } from "@blocknote/xl-multi-column";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBlox, readBlox } from "./blox-file";
+import { Companion } from "./companion/Companion";
 import {
   loadMode,
   saveDocument,
@@ -63,6 +64,29 @@ function pdfName(blocks: DocBlock[]): string {
   return "blox";
 }
 
+// Título del manuscrito para el compañero: la primera línea, cortada en una palabra.
+function shortTitle(name: string): string {
+  if (name === "blox") return "Sin título";
+  if (name.length <= 40) return name;
+  const cut = name.slice(0, 40);
+  return `${cut.slice(0, cut.lastIndexOf(" ") > 20 ? cut.lastIndexOf(" ") : 40)}…`;
+}
+
+type TextBlock = { content?: unknown; children?: TextBlock[] };
+
+// Palabras del documento (texto de todos los bloques, incluidos los anidados).
+function countWords(blocks: TextBlock[]): number {
+  let n = 0;
+  for (const block of blocks) {
+    if (Array.isArray(block.content)) {
+      const text = block.content.map((c: { text?: string }) => c.text ?? "").join("");
+      n += text.match(/\S+/g)?.length ?? 0;
+    }
+    n += countWords(block.children ?? []);
+  }
+  return n;
+}
+
 export default function App({ initialContent }: { initialContent?: AppBlock[] }) {
   const [mode, setMode] = useState<Mode>(loadMode);
   const [cursorBlockId, setCursorBlockId] = useState<string>();
@@ -77,6 +101,9 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
       multi_column: multiColumnLocales.es,
     },
   });
+
+  const [words, setWords] = useState(() => countWords(editor.document));
+  const [lastTypedAt, setLastTypedAt] = useState(0);
 
   // Autoguardado con debounce; al salir de la página se guarda lo pendiente.
   useEffect(() => {
@@ -94,6 +121,8 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
       saveDocumentBeforeUnload(editor.document);
     };
     const unsubscribe = editor.onChange(() => {
+      setWords(countWords(editor.document));
+      setLastTypedAt(Date.now());
       window.clearTimeout(timer);
       timer = window.setTimeout(flush, AUTOSAVE_DELAY_MS);
     });
@@ -132,7 +161,6 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
     [editor],
   );
 
-  const [pdfBusy, setPdfBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   // En local (servidor de Vite) el PDF lo genera un Chrome sin ventana y llega
@@ -141,16 +169,8 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
   const exportPdf = async () => {
     const name = pdfName(editor.document);
     if (!import.meta.env.DEV) {
-      setPdfBusy(true);
-      try {
-        const { exportPdfInBrowser } = await import("./pdf-web");
-        await exportPdfInBrowser(editor, mode, name);
-      } catch (error) {
-        console.error("No se pudo generar el PDF", error);
-        window.alert("No se pudo generar el PDF.");
-      } finally {
-        setPdfBusy(false);
-      }
+      const { exportPdfInBrowser } = await import("./pdf-web");
+      await exportPdfInBrowser(editor, mode, name);
       return;
     }
     const form = document.createElement("form");
@@ -216,15 +236,6 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
             Guardar
           </button>
         </div>
-        <button
-          type="button"
-          className="pdf-button"
-          onClick={exportPdf}
-          disabled={pdfBusy}
-          aria-busy={pdfBusy}
-        >
-          {pdfBusy ? "…" : "PDF"}
-        </button>
         <input
           ref={fileInput}
           type="file"
@@ -239,6 +250,12 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
       {mode === 2 && cursorBlockId && (
         <style>{`.a4-sheet .bn-block[data-id="${cursorBlockId}"] > .bn-block-content { background: var(--zed-active-line); box-shadow: 0 0 0 100vmax var(--zed-active-line); clip-path: inset(0 -100vmax); }`}</style>
       )}
+      <Companion
+        words={words}
+        lastTypedAt={lastTypedAt}
+        docTitle={shortTitle(pdfName(editor.document))}
+        onPublish={exportPdf}
+      />
       <iframe name="pdf-download" title="Descarga del PDF" hidden />
       <div className="a4-sheet">
         <BlockNoteView

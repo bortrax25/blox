@@ -1,0 +1,295 @@
+/* Compañero de escritura: tarjeta salvia con tinta café y tipografía clásica. */
+.companion {
+  --c-bg: #b3b8ad;
+  --c-ink: #3a302c;
+  --c-font: "Old Standard TT", "Libre Caslon Text", Georgia, serif;
+  position: fixed;
+  top: 64px;
+  right: 16px;
+  z-index: 9;
+  box-sizing: border-box;
+  width: 300px;
+  padding: 14px 16px 0;
+  overflow: hidden;
+  border: 1px solid rgba(58, 48, 44, 0.35);
+  border-radius: 18px;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--c-font);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.companion-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.companion-money {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.companion-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.companion-btn {
+  position: relative;
+  padding: 4px 9px;
+  border: 1px solid var(--c-ink);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-ink);
+  font: 13px/1.2 var(--c-font);
+  cursor: pointer;
+}
+
+.companion-btn:hover,
+.companion-btn[aria-pressed="true"] {
+  background: var(--c-ink);
+  color: var(--c-bg);
+}
+
+.companion-btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.companion-menu {
+  width: 32px;
+  font-size: 16px;
+}
+
+.companion-badge {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #9b3a38;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.companion-primary {
+  padding: 6px 16px;
+  background: var(--c-ink);
+  color: var(--c-bg);
+  font-size: 15px;
+}
+
+/* Título del manuscrito pasando como cinta. */
+.companion-ticker {
+  margin-top: 6px;
+  overflow: hidden;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.companion-ticker span {
+  display: inline-block;
+  animation: companion-ticker 14s linear infinite;
+}
+
+@keyframes companion-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.companion-words {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.companion-words em {
+  font-size: 24px;
+}
+
+.companion-progress {
+  margin-top: 4px;
+  font-size: 17px;
+}
+
+.companion-earning {
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.companion-scene {
+  display: block;
+  width: calc(100% + 32px);
+  margin: 4px -16px 0;
+}
+
+.companion-zzz {
+  animation: companion-zzz 2.4s ease-in-out infinite;
+}
+
+@keyframes companion-zzz {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-2px);
+    opacity: 0.55;
+  }
+}
+
+/* Menú ≡, nombre del proyecto y avisos: cajas sobre la escena. */
+.companion-panel,
+.companion-dialog {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  z-index: 2;
+  padding: 14px 16px;
+  border: 1px solid var(--c-ink);
+  border-radius: 10px;
+  background: rgba(179, 184, 173, 0.95);
+}
+
+.companion-panel {
+  top: 52px;
+}
+
+.companion-dialog {
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.companion-dialog p {
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.companion-dialog em,
+.companion-panel em {
+  font-weight: 700;
+}
+
+.companion-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--c-ink);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-ink);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.companion-dialog:has(.companion-close) p {
+  padding-right: 28px;
+}
+
+.companion-label {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.companion-hint {
+  margin: 6px 0 12px;
+  font-size: 12px;
+}
+
+.companion-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.companion-input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px 8px;
+  border: 1px solid var(--c-ink);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--c-ink);
+  font: 14px var(--c-font);
+}
+
+.companion-goal {
+  width: 64px;
+  margin: 0;
+  padding: 3px 6px;
+  font-size: 13px;
+}
+
+.companion-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.companion-confetti i {
+  position: absolute;
+  top: -12px;
+  background: var(--c-ink);
+  opacity: 0.75;
+  animation: companion-fall linear infinite;
+}
+
+@keyframes companion-fall {
+  to {
+    transform: translate(var(--drift), 380px) rotate(var(--spin));
+  }
+}
+
+/* Minimizado: una pastilla con lo esencial. */
+.companion-mini {
+  top: auto;
+  bottom: 16px;
+  display: flex;
+  gap: 12px;
+  width: auto;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Pantallas anchas: el texto (y la hoja) dejan sitio a la tarjeta abierta. */
+@media screen and (min-width: 841px) {
+  .desk:has(> .companion:not(.companion-mini)) {
+    padding-right: 332px;
+  }
+}
+
+@media (max-width: 840px) {
+  .companion:not(.companion-mini) {
+    top: auto;
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: 360px;
+    margin-left: auto;
+  }
+}
+
+@media print {
+  .companion {
+    display: none !important;
+  }
+}
