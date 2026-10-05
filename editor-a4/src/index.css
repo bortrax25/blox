@@ -4,6 +4,8 @@
   --sheet-margin: 20mm;
   --desk-bg: #e8e8e8;
   --font-doc: "Arial", "Arimo", "Liberation Sans", sans-serif;
+  /* Alto útil de cada página impresa (los 20 mm de margen se repiten en cada una). */
+  --page-content-height: calc(var(--sheet-height) - 2 * var(--sheet-margin));
 }
 
 html,
@@ -23,6 +25,8 @@ body {
 
 /* Hoja A4: crece hacia abajo si el contenido supera una página. */
 .a4-sheet {
+  position: relative;
+  isolation: isolate;
   box-sizing: border-box;
   width: var(--sheet-width);
   min-height: var(--sheet-height);
@@ -32,11 +36,33 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* Guías punteadas donde cortará cada página al imprimir. El área útil empieza a
+   20 mm y cada página impresa aporta 257 mm de contenido; el alto se recorta 1px
+   para no dibujar una guía al final de un documento de una sola página. */
+.a4-sheet::before {
+  content: "";
+  position: absolute;
+  top: var(--sheet-margin);
+  bottom: calc(var(--sheet-margin) + 1px);
+  left: 0;
+  right: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--page-content-height) - 1px),
+    #b5b5b5 calc(var(--page-content-height) - 1px) var(--page-content-height)
+  );
+  -webkit-mask-image: repeating-linear-gradient(to right, #000 0 6px, transparent 6px 12px);
+  mask-image: repeating-linear-gradient(to right, #000 0 6px, transparent 6px 12px);
+}
+
 /* Tipografía del documento y colores del editor. */
 .a4-sheet .bn-container {
   --bn-font-family: var(--font-doc);
   --bn-colors-editor-text: #000;
-  --bn-colors-editor-background: #fff;
+  /* Transparente para que se vean las guías de página bajo el texto. */
+  --bn-colors-editor-background: transparent;
   font-family: var(--font-doc);
 }
 
@@ -44,7 +70,7 @@ body {
 .a4-sheet .bn-editor {
   padding: 0;
   border-radius: 0;
-  min-height: calc(var(--sheet-height) - 2 * var(--sheet-margin));
+  min-height: var(--page-content-height);
   font-family: var(--font-doc);
   font-size: 12pt;
   color: #000;
@@ -107,8 +133,13 @@ body {
     box-decoration-break: clone;
   }
 
+  .a4-sheet::before {
+    display: none;
+  }
+
   .a4-sheet .bn-editor {
     min-height: 0;
+    caret-color: transparent;
   }
 
   /* Menús flotantes, asa lateral y barras de herramientas del editor. */
