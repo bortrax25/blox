@@ -1,22 +1,82 @@
-const STORAGE_KEY = "editor-a4:document";
+const LEGACY_KEY = "editor-a4:document";
+const DB_NAME = "blox";
+const STORE = "kv";
+const DOC_KEY = "document";
+
+// IndexedDB en vez de localStorage: las imágenes van dentro del documento como
+// data URL y localStorage se llena con ~5 MB.
+let db: Promise<IDBDatabase> | undefined;
+
+function openDb(): Promise<IDBDatabase> {
+  db ??= new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return db;
+}
+
+async function run<T>(mode: IDBTransactionMode, op: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  const store = (await openDb()).transaction(STORE, mode).objectStore(STORE);
+  return new Promise((resolve, reject) => {
+    const req = op(store);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function validBlocks<T>(value: unknown): T[] | undefined {
+  return Array.isArray(value) && value.length > 0 ? (value as T[]) : undefined;
+}
 
 // Lee el documento guardado; devuelve undefined si no hay nada válido.
-export function loadDocument<T>(): T[] | undefined {
+// Lo que haya en localStorage (versiones anteriores, o el PDF local que lo deja
+// ahí) tiene prioridad: se pasa a IndexedDB y se borra de localStorage.
+export async function loadDocument<T>(): Promise<T[] | undefined> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return undefined;
-    const blocks: unknown = JSON.parse(raw);
-    return Array.isArray(blocks) && blocks.length > 0 ? (blocks as T[]) : undefined;
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const blocks = validBlocks<T>(JSON.parse(legacy));
+      if (blocks) await run("readwrite", (s) => s.put(blocks, DOC_KEY));
+      localStorage.removeItem(LEGACY_KEY);
+      return blocks;
+    }
+  } catch (error) {
+    console.warn("No se pudo migrar el documento de localStorage", error);
+  }
+  try {
+    return validBlocks<T>(await run("readonly", (s) => s.get(DOC_KEY)));
   } catch {
     return undefined;
   }
 }
 
-export function saveDocument(blocks: unknown[]): void {
+export async function saveDocument(blocks: unknown[]): Promise<void> {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(blocks));
+    await run("readwrite", (s) => s.put(blocks, DOC_KEY));
   } catch (error) {
-    // Cuota llena (p. ej. imágenes muy grandes) o almacenamiento bloqueado.
-    console.warn("No se pudo guardar el documento en localStorage", error);
+    // Disco lleno o almacenamiento bloqueado (p. ej. navegación privada).
+    console.warn("No se pudo guardar el documento", error);
+  }
+}
+
+export type Mode = 1 | 2;
+
+const MODE_KEY = "editor-a4:mode";
+
+export function loadMode(): Mode {
+  try {
+    return localStorage.getItem(MODE_KEY) === "2" ? 2 : 1;
+  } catch {
+    return 1;
+  }
+}
+
+export function saveMode(mode: Mode): void {
+  try {
+    localStorage.setItem(MODE_KEY, String(mode));
+  } catch {
+    // Almacenamiento bloqueado: el modo solo dura esta sesión.
   }
 }

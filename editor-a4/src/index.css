@@ -76,29 +76,220 @@ body {
   color: #000;
 }
 
-.pdf-button {
+.top-bar {
   position: fixed;
   top: 16px;
   right: 16px;
   z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+
+.pdf-button,
+.mode-switch,
+.file-buttons {
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font: 600 14px/1 var(--font-doc);
+}
+
+.pdf-button {
   padding: 8px 18px;
   border: none;
-  border-radius: 6px;
   background: #222;
   color: #fff;
-  font: 600 14px/1 var(--font-doc);
   letter-spacing: 0.04em;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .pdf-button:hover {
   background: #000;
 }
 
-.pdf-button:focus-visible {
+.pdf-button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+/* Grupos de botones pegados (modo, archivo); el modo activo va relleno. */
+.mode-switch,
+.file-buttons {
+  display: flex;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mode-switch button,
+.file-buttons button {
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mode-switch button:hover,
+.file-buttons button:hover {
+  background: #eee;
+}
+
+.mode-switch button[aria-pressed="true"] {
+  background: #222;
+  color: #fff;
+}
+
+.pdf-button:focus-visible,
+.mode-switch button:focus-visible,
+.file-buttons button:focus-visible {
   outline: 2px solid #4a90e2;
   outline-offset: 2px;
+}
+
+/* Celular: la hoja ocupa el ancho de la pantalla (el PDF sigue siendo A4). */
+@media screen and (max-width: 840px) {
+  .desk {
+    padding: 56px 0 0;
+  }
+
+  .a4-sheet {
+    width: 100%;
+    min-height: calc(100vh - 56px);
+    padding: 16px 16px 50vh;
+    box-shadow: none;
+  }
+
+  .a4-sheet::before {
+    display: none;
+  }
+
+  .a4-sheet .bn-editor {
+    min-height: 0;
+  }
+
+  .top-bar {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .pdf-button {
+    padding: 8px 12px;
+  }
+
+  .mode-switch button,
+  .file-buttons button {
+    padding: 0 9px;
+  }
+}
+
+/* ---------- Modo 2: editor oscuro estilo Zed ---------- */
+:root[data-mode="2"] {
+  --desk-bg: #1f1f1f;
+  --zed-text: #cccccc;
+  --zed-active-line: #282828;
+  --zed-guide: #707070;
+  --font-doc: "Lilex", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+
+/* Sin hoja: el texto ocupa la ventana como en un editor de código. */
+@media screen {
+  [data-mode="2"] .desk {
+    padding: 0;
+  }
+
+  [data-mode="2"] .a4-sheet {
+    width: auto;
+    min-height: 100vh;
+    padding: 12px 32px 50vh 56px;
+    box-shadow: none;
+  }
+
+  [data-mode="2"] .a4-sheet::before {
+    display: none;
+  }
+
+  [data-mode="2"] .a4-sheet .bn-editor {
+    min-height: 0;
+  }
+}
+
+@media screen and (max-width: 840px) {
+  [data-mode="2"] .a4-sheet {
+    padding: 56px 16px 50vh 40px;
+  }
+}
+
+[data-mode="2"] .a4-sheet {
+  background: var(--desk-bg);
+}
+
+[data-mode="2"] .a4-sheet .bn-container {
+  --bn-colors-editor-text: var(--zed-text);
+}
+
+[data-mode="2"] .a4-sheet .bn-editor {
+  color: var(--zed-text);
+  font-size: 15px;
+  caret-color: var(--zed-text);
+}
+
+/* Cada bloque mide una línea de Zed: 15px × 1.618 ≈ 24px. */
+[data-mode="2"] .a4-sheet .bn-block-outer {
+  line-height: 1.618;
+}
+
+[data-mode="2"] .a4-sheet .bn-block-content {
+  padding: 0;
+}
+
+/* Viñetas como guion, igual que el texto plano de Zed. */
+[data-mode="2"] .a4-sheet .bn-block-content[data-content-type="bulletListItem"]::before {
+  content: "-" !important;
+  justify-content: flex-start;
+  min-width: 2ch;
+  padding-right: 0;
+}
+
+/* Guía vertical de sangría: un carácter antes del guion padre; hijos a 2 caracteres. */
+[data-mode="2"] .a4-sheet .bn-block-group .bn-block-group {
+  margin-left: -1ch;
+  padding-left: calc(3ch - 1px);
+  border-left: 1px solid var(--zed-guide);
+}
+
+/* BlockNote dibuja su propia guía; en este modo basta con la de arriba. */
+[data-mode="2"] .a4-sheet .bn-block-group .bn-block-group > .bn-block-outer::before {
+  content: none;
+}
+
+/* Separador como una fila de guiones de texto monoespaciado. */
+[data-mode="2"] .a4-sheet [data-content-type="divider"] hr {
+  height: 1px;
+  margin: calc(0.809em - 0.5px) 0;
+  border: none;
+  background: repeating-linear-gradient(to right, var(--zed-text) 0 5px, transparent 5px 1ch);
+}
+
+[data-mode="2"] .mode-switch,
+[data-mode="2"] .file-buttons {
+  background: #2a2a2a;
+}
+
+[data-mode="2"] .mode-switch button,
+[data-mode="2"] .file-buttons button {
+  color: var(--zed-text);
+}
+
+[data-mode="2"] .mode-switch button:hover,
+[data-mode="2"] .file-buttons button:hover {
+  background: #333;
+}
+
+[data-mode="2"] .mode-switch button[aria-pressed="true"],
+[data-mode="2"] .pdf-button {
+  background: #3a3a3a;
+  color: #fff;
 }
 
 /* ---------- Impresión / PDF ---------- */
@@ -115,7 +306,7 @@ body {
 
   /* Solo la hoja: fuera botón, portales y cualquier otra UI. */
   body > :not(#root),
-  .pdf-button {
+  .top-bar {
     display: none !important;
   }
 
@@ -140,6 +331,14 @@ body {
   .a4-sheet .bn-editor {
     min-height: 0;
     caret-color: transparent;
+  }
+
+  /* El PDF del modo 2 conserva el fondo oscuro. */
+  [data-mode="2"],
+  [data-mode="2"] body {
+    background: var(--desk-bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   /* Menús flotantes, asa lateral y barras de herramientas del editor. */
