@@ -21,9 +21,20 @@ import { useMemo } from "react";
 
 const schema = withMultiColumn(BlockNoteSchema.create());
 
+// Sin servidor: las imágenes se guardan dentro del documento como data URL.
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function App() {
   const editor = useCreateBlockNote({
     schema,
+    uploadFile: fileToDataUrl,
     dropCursor: multiColumnDropCursor,
     dictionary: {
       ...locales.es,
