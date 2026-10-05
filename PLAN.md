@@ -50,13 +50,13 @@ Barra lateral, varios documentos, colaboración, comentarios, IA, temas oscuros,
 8. Opcional: líneas guía punteadas cada 297 mm para ver dónde cortará cada página al imprimir.
 
 ## Criterios de aceptación
-- [ ] Al abrir, veo solo una hoja A4 blanca y el botón PDF.
-- [ ] Puedo escribir párrafos en Arial.
-- [ ] Puedo insertar una imagen y moverla con el asa a otra posición.
-- [ ] Puedo soltar una imagen al lado de un párrafo y quedan en columnas (2 y 3 columnas).
-- [ ] Puedo cambiar el tamaño de las imágenes.
-- [ ] El botón PDF genera un PDF A4 que se ve igual que la pantalla, sin asas ni botones.
-- [ ] Al recargar la página, el contenido sigue ahí.
+- [x] Al abrir, veo solo una hoja A4 blanca y el botón PDF.
+- [x] Puedo escribir párrafos en Arial.
+- [x] Puedo insertar una imagen y moverla con el asa a otra posición.
+- [x] Puedo soltar una imagen al lado de un párrafo y quedan en columnas (2 y 3 columnas).
+- [x] Puedo cambiar el tamaño de las imágenes.
+- [x] El botón PDF genera un PDF A4 que se ve igual que la pantalla, sin asas ni botones.
+- [x] Al recargar la página, el contenido sigue ahí.
 
 ## Notas
 - Los paquetes `@blocknote/xl-*` son GPL-3.0 (gratis para uso personal/académico u open source).
