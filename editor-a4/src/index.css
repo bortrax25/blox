@@ -210,13 +210,10 @@ body {
   caret-color: var(--zed-text);
 }
 
-/* Cada bloque mide una línea de Zed: 15px × 1.618 ≈ 24px. */
+/* Interlineado de Zed (15px × 1.618 ≈ 24px). Entre párrafos queda el mismo
+   respiro de 3px arriba y abajo que el modo 1, para distinguirlos a simple vista. */
 [data-mode="2"] .a4-sheet .bn-block-outer {
   line-height: 1.618;
-}
-
-[data-mode="2"] .a4-sheet .bn-block-content {
-  padding: 0;
 }
 
 /* Viñetas como guion, igual que el texto plano de Zed. */

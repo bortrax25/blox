@@ -107,9 +107,6 @@ export async function exportPdfInBrowser(
     paddingHorizontal: 20 * MM,
     ...PAGE[mode],
   };
-  // El exportador separa cada bloque 3px arriba y abajo, como el modo 1 en
-  // pantalla; el modo 2 pega las líneas igual que Zed.
-  if (mode === 2) exporter.styles.block = { paddingVertical: 0 };
 
   const doc = await exporter.toReactPDFDocument(
     matchScreen(editor.document) as typeof editor.document,
