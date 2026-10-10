@@ -7,15 +7,11 @@
   --card-scale: 1;
 }
 
+/* Solo 1 y 0.75: la escena mide 72 × 42 píxeles de dibujo y la tarjeta 288 px,
+   así cada píxel del dibujo ocupa 4 px (o 3 px) exactos y se ve nítido. */
 @media screen and (max-width: 1100px) {
   :root {
-    --card-scale: 0.8;
-  }
-}
-
-@media screen and (max-width: 800px) {
-  :root {
-    --card-scale: 0.66;
+    --card-scale: 0.75;
   }
 }
 
@@ -30,7 +26,8 @@
   right: calc(16px / var(--card-scale));
   z-index: 9;
   box-sizing: border-box;
-  width: 300px;
+  /* 288 px de escena + 1 px de borde a cada lado. */
+  width: 290px;
   padding: 14px 16px 0;
   overflow: hidden;
   border: 1px solid rgba(58, 48, 44, 0.35);
@@ -146,7 +143,7 @@
 
 .companion-scene {
   display: block;
-  width: calc(100% + 32px);
+  width: 288px; /* 72 píxeles de dibujo × 4 px: nítido también al 0.75 (3 px) */
   margin: 4px -16px 0;
 }
 
@@ -294,7 +291,7 @@
 /* Pantallas anchas: el texto (y la hoja) dejan sitio a la tarjeta abierta. */
 @media screen and (min-width: 561px) {
   .desk:has(> .companion:not(.companion-mini)) {
-    padding-right: calc(300px * var(--card-scale) + 32px);
+    padding-right: calc(290px * var(--card-scale) + 32px);
   }
 }
 

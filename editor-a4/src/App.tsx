@@ -143,6 +143,23 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
     saveMode(mode);
   }, [mode]);
 
+  // Modo 1: escala de la hoja A4 para que quepa en el ancho disponible
+  // (descontando el espacio de la tarjeta); ver index.css.
+  useEffect(() => {
+    const desk = document.querySelector<HTMLElement>(".desk");
+    if (!desk) return;
+    const sheetPx = (210 * 96) / 25.4;
+    const fit = () => {
+      const style = getComputedStyle(desk);
+      const available = desk.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const scale = Math.min(1, available / sheetPx);
+      document.documentElement.style.setProperty("--sheet-scale", scale.toFixed(4));
+    };
+    const observer = new ResizeObserver(fit);
+    observer.observe(desk);
+    return () => observer.disconnect();
+  }, []);
+
   // Bloque donde está el cursor, para resaltar la línea actual en el modo 2.
   useEffect(
     () =>

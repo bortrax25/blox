@@ -126,16 +126,30 @@ body {
   outline-offset: 2px;
 }
 
-/* En pantalla la hoja nunca se sale de la ventana: si no cabe, se angosta
-   (el PDF sigue siendo A4). */
-@media screen {
-  .a4-sheet {
-    max-width: 100%;
+/* Modo 1: la hoja conserva siempre la proporción A4 (y los mismos saltos de
+   línea que el PDF). Si no cabe, se reduce entera, como un visor de PDF;
+   App calcula --sheet-scale con el ancho disponible. */
+@media screen and (min-width: 561px) {
+  [data-mode="1"] .a4-sheet {
+    zoom: var(--sheet-scale, 1);
+  }
+}
+
+@media screen and (max-width: 840px) {
+  .top-bar {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .mode-switch button,
+  .file-buttons button {
+    padding: 0 9px;
   }
 }
 
 /* Celular: la hoja ocupa el ancho de la pantalla (el PDF sigue siendo A4). */
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 560px) {
   .desk {
     padding: 56px 0 0;
   }
@@ -153,17 +167,6 @@ body {
 
   .a4-sheet .bn-editor {
     min-height: 0;
-  }
-
-  .top-bar {
-    top: 10px;
-    right: 10px;
-    gap: 6px;
-  }
-
-  .mode-switch button,
-  .file-buttons button {
-    padding: 0 9px;
   }
 }
 
