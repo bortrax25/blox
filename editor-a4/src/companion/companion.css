@@ -1,8 +1,7 @@
 /* Compañero de escritura: tarjeta salvia con tinta café y tipografía clásica. */
 
 /* Escala de la tarjeta según el ancho de la ventana (y el zoom del navegador):
-   cuando falta espacio se achica entera, sin desordenarse, en vez de tapar
-   el texto o saltar al diseño de celular. */
+   en ventanas medianas o pequeñas se achica entera para tapar menos. */
 :root {
   --card-scale: 1;
 }
@@ -288,37 +287,8 @@
   cursor: pointer;
 }
 
-/* Pantallas anchas: el texto (y la hoja) dejan sitio a la tarjeta abierta. */
-@media screen and (min-width: 561px) {
-  .desk:has(> .companion:not(.companion-mini)) {
-    padding-right: calc(290px * var(--card-scale) + 32px);
-  }
-}
-
-/* Ventanas angostas: la tarjeta va arriba del texto y se desplaza con la
-   página, en vez de quedar fija encima de lo que escribes. */
-@media screen and (max-width: 560px) {
-  :root {
-    --card-scale: 1;
-  }
-
-  .companion:not(.companion-mini) {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: calc(100% - 20px);
-    max-width: 360px;
-    margin: 0 auto 16px;
-  }
-
-  [data-mode="2"] .companion:not(.companion-mini) {
-    margin-top: 56px;
-  }
-
-  [data-mode="2"] .desk:has(> .companion:not(.companion-mini)) .a4-sheet {
-    padding-top: 0;
-  }
-}
+/* La tarjeta abierta flota arriba a la derecha, encima del documento, sin
+   reservarle espacio: la hoja y el texto conservan todo el ancho. */
 
 @media print {
   .companion {
