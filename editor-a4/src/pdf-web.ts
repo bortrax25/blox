@@ -1,9 +1,14 @@
 import type { BlockNoteEditor } from "@blocknote/core";
 import arimoBold from "@fontsource/arimo/files/arimo-latin-700-normal.woff?url";
+import arimoBoldItalic from "@fontsource/arimo/files/arimo-latin-700-italic.woff?url";
+import arimoItalic from "@fontsource/arimo/files/arimo-latin-400-italic.woff?url";
 import arimoRegular from "@fontsource/arimo/files/arimo-latin-400-normal.woff?url";
 import lilexBold from "@fontsource/lilex/files/lilex-latin-700-normal.woff?url";
+import lilexBoldItalic from "@fontsource/lilex/files/lilex-latin-700-italic.woff?url";
+import lilexItalic from "@fontsource/lilex/files/lilex-latin-400-italic.woff?url";
 import lilexRegular from "@fontsource/lilex/files/lilex-latin-400-normal.woff?url";
 import { createElement } from "react";
+import { MODE2_COLORS } from "./palette";
 import type { Mode } from "./storage";
 
 // PDF de la versión web (sin servidor): BlockNote rehace el documento con
@@ -11,11 +16,18 @@ import type { Mode } from "./storage";
 
 const MM = 72 / 25.4; // puntos por milímetro
 
+// Las cuatro variantes de cada fuente: si falta una (p. ej. la cursiva),
+// react-pdf se cuelga al encontrar texto con ese estilo.
+const variants = (family: string, regular: string, italic: string, bold: string, boldItalic: string) => [
+  { family, src: regular },
+  { family, src: italic, fontStyle: "italic" as const },
+  { family, src: bold, fontWeight: "bold" as const },
+  { family, src: boldItalic, fontWeight: "bold" as const, fontStyle: "italic" as const },
+];
+
 const FONTS = [
-  { family: "Arimo", src: arimoRegular },
-  { family: "Arimo", src: arimoBold, fontWeight: "bold" as const },
-  { family: "Lilex", src: lilexRegular },
-  { family: "Lilex", src: lilexBold, fontWeight: "bold" as const },
+  ...variants("Arimo", arimoRegular, arimoItalic, arimoBold, arimoBoldItalic),
+  ...variants("Lilex", lilexRegular, lilexItalic, lilexBold, lilexBoldItalic),
 ];
 
 // Lo mismo que muestra la pantalla en cada modo (ver index.css).
@@ -29,6 +41,15 @@ const PAGE = {
   },
   2: {
     fontFamily: "Lilex",
+    fontSize: 15 * 0.75,
+    lineHeight: 1.618,
+    color: "#cccccc",
+    backgroundColor: "#1f1f1f",
+  },
+  // Modo 3: oscuro como el 2; en pantalla usa Aptos, que no se puede incrustar,
+  // así que el PDF va en Arial (Arimo), como el modo 1.
+  3: {
+    fontFamily: "Arimo",
     fontSize: 15 * 0.75,
     lineHeight: 1.618,
     color: "#cccccc",
@@ -74,7 +95,7 @@ export async function exportPdfInBrowser(
   mode: Mode,
   name: string,
 ): Promise<void> {
-  const [{ PDFExporter, pdfDefaultSchemaMappings }, { pdf, View }] = await Promise.all([
+  const [{ PDFExporter, pdfDefaultSchemaMappings }, { pdf, Text, View }] = await Promise.all([
     import("@blocknote/xl-pdf-exporter/react-pdf"),
     import("@react-pdf/renderer"),
   ]);
@@ -84,6 +105,12 @@ export async function exportPdfInBrowser(
   // react-pdf con Arimo).
   const page = PAGE[mode];
   const { blockMapping } = pdfDefaultSchemaMappings;
+  const darkQuote: typeof blockMapping.quote = (block, exporter) =>
+    createElement(
+      Text,
+      { style: { borderLeft: "1.5pt solid #4d4d49", color: "#b4b4ae", paddingLeft: 9.5 * 0.75 } },
+      exporter.transformInlineContent(block.content),
+    ) as unknown as ReturnType<typeof blockMapping.quote>;
   const mappings = {
     ...pdfDefaultSchemaMappings,
     blockMapping: {
@@ -92,6 +119,8 @@ export async function exportPdfInBrowser(
         Array.isArray(block.content) && block.content.length === 0
           ? createElement(View, { style: { height: page.fontSize * page.lineHeight } })
           : blockMapping.paragraph(block, ...rest)) as typeof blockMapping.paragraph,
+      // En los modos oscuros, las citas con el mismo gris claro que en pantalla.
+      ...(mode !== 1 && { quote: darkQuote }),
     },
   };
 
@@ -99,6 +128,7 @@ export async function exportPdfInBrowser(
     fonts: FONTS,
     // Las imágenes ya son data URL: nada de pasarlas por el proxy de BlockNote.
     resolveFileUrl: async (url) => url,
+    ...(mode !== 1 && { colors: MODE2_COLORS }),
   });
   exporter.styles.page = {
     ...exporter.styles.page,

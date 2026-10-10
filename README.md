@@ -11,7 +11,7 @@ El plan original de implementación está en [PLAN.md](PLAN.md).
 
 Escribe en la hoja, usa `/` para insertar títulos, imágenes o columnas, y arrastra los bloques con el asa ⋮⋮ (soltar en el borde derecho de un bloque, o en el margen a su izquierda, crea columnas).
 
-- **1 · 2**: modo 1 (hoja blanca A4, Arial) o modo 2 (editor oscuro estilo Zed).
+- **1 · 2 · 3**: modo 1 (hoja blanca A4, Arial), modo 2 (editor oscuro estilo Zed, Lilex) o modo 3 (el 2 con Aptos en pantalla; su PDF va en Arial). Aptos solo se ve en equipos que la tienen instalada; si no, Arial.
 - **PDF**: descarga el PDF con un clic. En local lo genera un Chrome sin ventana con la misma hoja de impresión que ves; en la web se arma en el navegador (texto seleccionable, los saltos de línea pueden variar un poco).
 - **Guardar / Abrir**: descarga o abre un archivo `.blox` editable (texto + imágenes) para pasar un documento entre la web y el Mac, o guardarlo en Drive.
 

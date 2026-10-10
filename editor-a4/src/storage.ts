@@ -72,13 +72,17 @@ export function saveDocumentBeforeUnload(blocks: unknown[]): void {
   }
 }
 
-export type Mode = 1 | 2;
+// 1 = hoja blanca, 2 = oscuro estilo Zed, 3 = el 2 con la tipografía Aptos.
+export type Mode = 1 | 2 | 3;
 
 const MODE_KEY = "editor-a4:mode";
 
+export const toMode = (value: unknown): Mode =>
+  value === 2 || value === "2" ? 2 : value === 3 || value === "3" ? 3 : 1;
+
 export function loadMode(): Mode {
   try {
-    return localStorage.getItem(MODE_KEY) === "2" ? 2 : 1;
+    return toMode(localStorage.getItem(MODE_KEY));
   } catch {
     return 1;
   }

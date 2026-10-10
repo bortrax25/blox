@@ -168,6 +168,18 @@ body {
   --font-doc: "Lilex", "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 
+/* Modo 3: el modo 2 con Aptos (si el equipo la tiene; si no, Arial). Al
+   imprimir va en Arial, igual que el PDF web del modo 3. */
+:root[data-mode="2"][data-font="aptos"] {
+  --font-doc: "Aptos", "Arimo", Arial, sans-serif;
+}
+
+@media print {
+  :root[data-mode="2"][data-font="aptos"] {
+    --font-doc: Arial, "Arimo", sans-serif;
+  }
+}
+
 /* Sin hoja: el texto ocupa la ventana como en un editor de código. */
 @media screen {
   [data-mode="2"] .desk {
@@ -214,6 +226,28 @@ body {
    respiro de 3px arriba y abajo que el modo 1, para distinguirlos a simple vista. */
 [data-mode="2"] .a4-sheet .bn-block-outer {
   line-height: 1.618;
+}
+
+/* Resaltados (colores en palette.ts): esquinas suaves y un poco de aire
+   alrededor del texto, sin mover el texto (el margen negativo compensa). */
+[data-mode="2"] .a4-sheet [data-style-type="backgroundColor"] {
+  padding: 1px 1px;
+  margin: 0 -1px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+[data-mode="2"] .a4-sheet .bn-block:has(> .bn-block-content[data-background-color]),
+[data-mode="2"] .a4-sheet .bn-block-content[data-background-color] {
+  border-radius: 4px;
+}
+
+/* Citas: un gris más claro que el de BlockNote (#7d797a) para que se lean
+   bien, también sobre un resaltado, y una barra lateral discreta. */
+[data-mode="2"] .a4-sheet [data-content-type="quote"] blockquote {
+  color: #b4b4ae;
+  border-left-color: #4d4d49;
 }
 
 /* Viñetas como guion, igual que el texto plano de Zed. */

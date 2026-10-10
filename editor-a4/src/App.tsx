@@ -21,6 +21,7 @@ import {
 } from "@blocknote/xl-multi-column";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBlox, readBlox } from "./blox-file";
+import { MODE2_PALETTE_CSS } from "./palette";
 import { Companion } from "./companion/Companion";
 import {
   loadMode,
@@ -136,7 +137,9 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
 
   // El modo vive en <html> para que también pinte el fondo de la página.
   useEffect(() => {
-    document.documentElement.dataset.mode = String(mode);
+    // El modo 3 es el 2 con otra tipografía: comparte todos sus estilos.
+    document.documentElement.dataset.mode = mode === 1 ? "1" : "2";
+    document.documentElement.dataset.font = mode === 3 ? "aptos" : "";
     saveMode(mode);
   }, [mode]);
 
@@ -213,7 +216,7 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
     <main className="desk">
       <div className="top-bar">
         <div className="mode-switch" role="group" aria-label="Modo">
-          {([1, 2] as const).map((m) => (
+          {([1, 2, 3] as const).map((m) => (
             <button
               key={m}
               type="button"
@@ -247,8 +250,9 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
           }}
         />
       </div>
-      {mode === 2 && cursorBlockId && (
-        <style>{`.a4-sheet .bn-block[data-id="${cursorBlockId}"] > .bn-block-content { background: var(--zed-active-line); box-shadow: 0 0 0 100vmax var(--zed-active-line); clip-path: inset(0 -100vmax); }`}</style>
+      <style>{MODE2_PALETTE_CSS}</style>
+      {mode !== 1 && cursorBlockId && (
+        <style>{`.a4-sheet .bn-block[data-id="${cursorBlockId}"] > .bn-block-content:not([data-background-color]) { background: var(--zed-active-line); box-shadow: 0 0 0 100vmax var(--zed-active-line); clip-path: inset(0 -100vmax); }`}</style>
       )}
       <Companion
         words={words}
@@ -260,7 +264,7 @@ export default function App({ initialContent }: { initialContent?: AppBlock[] })
       <div className="a4-sheet">
         <BlockNoteView
           editor={editor}
-          theme={mode === 2 ? "dark" : "light"}
+          theme={mode === 1 ? "light" : "dark"}
           slashMenu={false}
         >
           <SuggestionMenuController

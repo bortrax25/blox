@@ -1,4 +1,4 @@
-import type { Mode } from "./storage";
+import { toMode, type Mode } from "./storage";
 
 // Archivo .blox: el documento editable (texto + imágenes) para llevarlo entre
 // la web y el Mac, o guardarlo en Drive.
@@ -26,5 +26,5 @@ export async function readBlox(file: File): Promise<{ mode: Mode; document: unkn
   if (data?.app !== "blox" || !Array.isArray(data.document)) {
     throw new Error("El archivo no es un documento de blox.");
   }
-  return { mode: data.mode === 2 ? 2 : 1, document: data.document };
+  return { mode: toMode(data.mode), document: data.document };
 }
