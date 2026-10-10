@@ -126,6 +126,14 @@ body {
   outline-offset: 2px;
 }
 
+/* En pantalla la hoja nunca se sale de la ventana: si no cabe, se angosta
+   (el PDF sigue siendo A4). */
+@media screen {
+  .a4-sheet {
+    max-width: 100%;
+  }
+}
+
 /* Celular: la hoja ocupa el ancho de la pantalla (el PDF sigue siendo A4). */
 @media screen and (max-width: 840px) {
   .desk {

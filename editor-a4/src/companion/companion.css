@@ -1,11 +1,33 @@
 /* Compañero de escritura: tarjeta salvia con tinta café y tipografía clásica. */
+
+/* Escala de la tarjeta según el ancho de la ventana (y el zoom del navegador):
+   cuando falta espacio se achica entera, sin desordenarse, en vez de tapar
+   el texto o saltar al diseño de celular. */
+:root {
+  --card-scale: 1;
+}
+
+@media screen and (max-width: 1100px) {
+  :root {
+    --card-scale: 0.8;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  :root {
+    --card-scale: 0.66;
+  }
+}
+
 .companion {
+  zoom: var(--card-scale);
   --c-bg: #b3b8ad;
   --c-ink: #3a302c;
   --c-font: "Old Standard TT", "Libre Caslon Text", Georgia, serif;
   position: fixed;
-  top: 64px;
-  right: 16px;
+  /* zoom también escala top/right: se compensan para que no se muevan. */
+  top: calc(64px / var(--card-scale));
+  right: calc(16px / var(--card-scale));
   z-index: 9;
   box-sizing: border-box;
   width: 300px;
@@ -270,15 +292,19 @@
 }
 
 /* Pantallas anchas: el texto (y la hoja) dejan sitio a la tarjeta abierta. */
-@media screen and (min-width: 841px) {
+@media screen and (min-width: 561px) {
   .desk:has(> .companion:not(.companion-mini)) {
-    padding-right: 332px;
+    padding-right: calc(300px * var(--card-scale) + 32px);
   }
 }
 
 /* Ventanas angostas: la tarjeta va arriba del texto y se desplaza con la
    página, en vez de quedar fija encima de lo que escribes. */
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 560px) {
+  :root {
+    --card-scale: 1;
+  }
+
   .companion:not(.companion-mini) {
     position: relative;
     top: auto;
