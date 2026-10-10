@@ -19,6 +19,8 @@
   --c-bg: #b3b8ad;
   --c-ink: #3a302c;
   --c-font: "Old Standard TT", "Libre Caslon Text", Georgia, serif;
+  --c-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --c-soft: rgba(58, 48, 44, 0.62);
   position: fixed;
   /* zoom también escala top/right: se compensan para que no se muevan. */
   top: calc(64px / var(--card-scale));
@@ -43,9 +45,19 @@
   justify-content: space-between;
 }
 
+/* Etiquetas y botón principal en sans; cifras en la serif clásica. */
+.companion-caption {
+  font: 600 10px/1 var(--c-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
 .companion-money {
-  font-size: 22px;
-  line-height: 1.2;
+  margin-top: 4px;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .companion-actions {
@@ -76,8 +88,27 @@
 }
 
 .companion-menu {
-  width: 32px;
-  font-size: 16px;
+  width: 34px;
+  height: 32px;
+  border-radius: 9px;
+  border-color: rgba(58, 48, 44, 0.45);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.companion-publish {
+  height: 32px;
+  padding: 0 14px;
+  border-color: var(--c-ink);
+  border-radius: 9px;
+  background: var(--c-ink);
+  color: #f1efe9;
+  font: 700 13px/1 var(--c-sans);
+}
+
+.companion-publish:hover {
+  background: #2a221f;
+  color: #fff;
 }
 
 .companion-badge {
@@ -101,43 +132,52 @@
   font-size: 15px;
 }
 
-/* Título del manuscrito pasando como cinta. */
-.companion-ticker {
-  margin-top: 6px;
+.companion-title {
+  margin-top: 8px;
   overflow: hidden;
-  font-size: 11px;
+  color: var(--c-soft);
+  font-size: 13px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.companion-ticker span {
-  display: inline-block;
-  animation: companion-ticker 14s linear infinite;
-}
-
-@keyframes companion-ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 .companion-words {
-  margin-top: 2px;
-  font-size: 13px;
+  margin-top: 10px;
+  color: var(--c-soft);
+  font-size: 15px;
 }
 
 .companion-words em {
-  font-size: 24px;
+  color: var(--c-ink);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.companion-progress {
-  margin-top: 4px;
-  font-size: 17px;
+/* Barra de progreso de la meta. */
+.companion-bar {
+  height: 8px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(58, 48, 44, 0.14);
 }
 
-.companion-earning {
-  margin-top: 2px;
+.companion-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-ink);
+  transition: width 0.4s ease;
+}
+
+.companion-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--c-soft);
   font-size: 12px;
-  opacity: 0.8;
 }
 
 .companion-scene {

@@ -64,9 +64,12 @@ export function Companion({ words, lastTypedAt, docTitle, onPublish }: Props) {
   return (
     <aside className="companion" aria-label="Compañero de escritura">
       <header className="companion-head">
-        <div className="companion-money">{formatSoles(c.totalEarned)}</div>
+        <div>
+          <div className="companion-caption">Saldo</div>
+          <div className="companion-money">{formatSoles(c.totalEarned)}</div>
+        </div>
         <div className="companion-actions">
-          <button type="button" className="companion-btn" onClick={publish} disabled={busy}>
+          <button type="button" className="companion-btn companion-publish" onClick={publish} disabled={busy}>
             {busy ? "…" : "Publicar"}
           </button>
           <button type="button" className="companion-btn companion-menu" onClick={openMenu} aria-label="Menú">
@@ -75,20 +78,27 @@ export function Companion({ words, lastTypedAt, docTitle, onPublish }: Props) {
         </div>
       </header>
 
-      <div className="companion-ticker" aria-hidden>
-        <span>
-          Modo {c.timerMode} — {title} &nbsp;&nbsp;&nbsp; Modo {c.timerMode} — {title}
-        </span>
+      <div className="companion-title" title={title}>
+        Modo {c.timerMode} · {title}
       </div>
       <div className="companion-words">
-        <em>
-          {c.words} / {c.goal}
-        </em>{" "}
-        palabras
+        <em>{c.words}</em> / {c.goal} palabras
       </div>
-      <div className="companion-progress">{c.progress}%</div>
-      <div className="companion-earning">
-        {formatSoles(c.earnings)} · {formatTime(c.workedMs)}
+      <div
+        className="companion-bar"
+        role="progressbar"
+        aria-valuenow={c.progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Progreso de la meta"
+      >
+        <span style={{ width: `${c.progress}%` }} />
+      </div>
+      <div className="companion-stats">
+        <span>{c.progress} %</span>
+        <span>
+          {formatSoles(c.earnings)} · {formatTime(c.workedMs)}
+        </span>
       </div>
 
       <Scene activity={c.activity} />
